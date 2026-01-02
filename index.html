@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>操作系统复习文档 - 增强版</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --purple: #9b59b6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            grid-template-rows: auto auto 1fr auto;
+            min-height: 95vh;
+        }
+        
+        header {
+            grid-column: 1 / -1;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        /* 侧边导航 */
+        .sidebar {
+            grid-row: 2 / 4;
+            background: var(--primary);
+            padding: 20px 15px;
+            position: sticky;
+            top: 0;
+            height: calc(100vh - 40px);
+            overflow-y: auto;
+            color: white;
+        }
+        
+        .sidebar h3 {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 8px;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin: 8px 0;
+        }
+        
+        .sidebar a {
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .sidebar a:hover {
+            background: rgba(255,255,255,0.15);
+            padding-left: 15px;
+        }
+        
+        .sidebar .quick-jump {
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        
+        .sidebar .quick-jump input {
+            width: 100%;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+        
+        /* 搜索结果区域 */
+        #searchResults {
+            background: #fff9e6;
+            border: 1px solid var(--warning);
+            padding: 15px;
+            margin: 15px;
+            border-radius: 6px;
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        #searchResults h4 {
+            color: var(--warning);
+            margin-bottom: 10px;
+        }
+        
+        #searchResults ul {
+            list-style: none;
+            margin-left: 0;
+        }
+        
+        #searchResults li {
+            padding: 8px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        #searchResults li:hover {
+            background: var(--light);
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            grid-column: 2;
+            grid-row: 2 / 4;
+            padding: 30px;
+            overflow-y: auto;
+            max-height: calc(100vh - 40px);
+        }
+        
+        .section {
+            margin-bottom: 35px;
+            padding: 25px;
+            background: white;
+            border-radius: 10px;
+            border-left: 5px solid var(--secondary);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            scroll-margin-top: 20px;
+        }
+        
+        .section:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left-color: var(--purple);
+        }
+        
+        .section h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light);
+            display: flex;
+            align-items: center;
+            font-size: 1.6rem;
+        }
+        
+        .section h2::before {
+            content: "■";
+            color: var(--secondary);
+            margin-right: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .section h3 {
+            color: var(--secondary);
+            margin: 20px 0 12px;
+            padding-left: 15px;
+            border-left: 3px solid var(--warning);
+            font-size: 1.2rem;
+        }
+        
+        .section h4 {
+            color: var(--accent);
+            margin: 15px 0 8px;
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+        
+        /* 可折叠详情 */
+        details {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        
+        details summary {
+            font-weight: bold;
+            color: var(--primary);
+            padding: 5px;
+            outline: none;
+        }
+        
+        details[open] summary {
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+        
+        details .details-content {
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+        
+        /* 例题卡片 */
+        .example-card {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border: 1px solid #90caf9;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .example-card::before {
+            content: "例题";
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--secondary);
+            color: white;
+            padding: 3px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        
+        .example-card h4 {
+            color: var(--primary);
+            margin-top: 0;
+        }
+        
+        .example-card .solution {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            border-left: 3px solid var(--success);
+        }
+        
+        /* 提示框 */
+        .tip-box {
+            background: #f8f9fa;
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .tip-title {
+            font-weight: bold;
+            color: var(--success);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .tip-title::before {
+            content: "💡";
+            margin-right: 8px;
+        }
+        
+        /* 记忆口诀 */
+        .memory-trick {
+            background: #fff9e6;
+            border: 1px dashed var(--warning);
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            position: relative;
+        }
+        
+        .memory-trick::before {
+            content: "记忆口诀";
+            position: absolute;
+            top: -12px;
+            left: 15px;
+            background: var(--warning);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .memory-trick p {
+            margin-top: 10px;
+            font-weight: 500;
+            color: #d35400;
+            font-size: 1.1rem;
+        }
+        
+        /* 代码块 */
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            position: relative;
+        }
+        
+        .code-block::after {
+            content: "代码模板";
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--purple);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 0 6px 0 6px;
+            font-size: 0.7rem;
+        }
+        
+        /* 高亮 */
+        .highlight {
+            background: #fffacd;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+            color: #d35400;
+        }
+        
+        /* 警告框 */
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        
+        .warning-title {
+            font-weight: bold;
+            color: #e67e22;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .warning-title::before {
+            content: "⚠️";
+            margin-right: 8px;
+        }
+        
+        /* 考试策略 */
+        .exam-strategy {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #90caf9;
+        }
+        
+        .strategy-title {
+            font-size: 1.3rem;
+            color: #1565c0;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .score-distribution {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .score-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-top: 3px solid var(--secondary);
+            transition: transform 0.2s;
+        }
+        
+        .score-item:hover {
+            transform: translateY(-3px);
+        }
+        
+        .score-item .type {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .score-item .points {
+            font-size: 1.5rem;
+            color: var(--accent);
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        
+        /* 模板列表 */
+        .template-list {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--success);
+            margin: 15px 0;
+        }
+        
+        .template-list h4 {
+            color: var(--success) !important;
+            margin-top: 0 !important;
+        }
+        
+        .template-list ol {
+            margin-left: 20px;
+        }
+        
+        .template-list li {
+            margin: 8px 0;
+            padding-left: 5px;
+        }
+        
+        .template-list li::marker {
+            color: var(--success);
+            font-weight: bold;
+        }
+        
+        /* 页脚 */
+        footer {
+            grid-column: 1 / -1;
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+        }
+        
+        /* 返回顶部 */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--secondary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            z-index: 99;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .back-to-top:hover {
+            background: var(--accent);
+            transform: translateY(-3px);
+        }
+        
+        .back-to-top.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        /* 常见错误汇总 */
+        .error-summary {
+            background: #fce4ec;
+            border: 1px solid #f48fb1;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .error-summary h3 {
+            color: #c2185b;
+            margin-top: 0;
+        }
+        
+        .error-summary ul {
+            margin-left: 20px;
+        }
+        
+        .error-summary li {
+            margin: 8px 0;
+            padding: 5px;
+            background: white;
+            border-radius: 4px;
+            border-left: 3px solid #f48fb1;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                grid-row: 2;
+                position: relative;
+                height: auto;
+                max-height: 300px;
+                overflow-y: auto;
+            }
+            
+            .main-content {
+                grid-column: 1;
+                grid-row: 3;
+                max-height: none;
+            }
+            
+            header {
+                grid-row: 1;
+            }
+            
+            footer {
+                grid-row: 4;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .score-distribution {
+                flex-direction: column;
+            }
+            
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .section h2 {
+                font-size: 1.3rem;
+            }
+        }
+        
+        /* 打印样式 */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar, .back-to-top, .quick-jump {
+                display: none !important;
+            }
+            
+            .main-content {
+                max-height: none;
+                overflow: visible;
+            }
+            
+            .section {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                border: 1px solid #ddd;
+                box-shadow: none;
+            }
+            
+            details {
+                border: 1px solid #ddd;
+            }
+            
+            details summary {
+                display: list-item;
+            }
+            
+            details .details-content {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>操作系统复习文档</h1>
+            <p>高效备考指南 | 考点精讲 + 解题模板 + 记忆口诀 + 例题实战</p>
+        </header>
+        
+        <!-- 侧边导航栏 -->
+        <nav class="sidebar">
+            <h3>📚 快速导航</h3>
+            <ul>
+                <li><a href="#overview">复习策略</a></li>
+                <li><a href="#chapter1">第1章 概论</a></li>
+                <li><a href="#chapter2">第2章 进程管理</a></li>
+                <li><a href="#chapter3">第3章 调度与死锁</a></li>
+                <li><a href="#chapter4">第4章 存储管理</a></li>
+                <li><a href="#chapter5">第5章 设备管理</a></li>
+                <li><a href="#chapter6">第6章 文件管理</a></li>
+                <li><a href="#error-summary">易错点汇总</a></li>
+                <li><a href="#templates">必练模板</a></li>
+            </ul>
+            
+            <div class="quick-jump">
+                <strong>🔍 搜索考点</strong>
+                <input type="text" id="searchInput" placeholder="输入关键词（如：信号量、PV）">
+                <div id="searchResults"></div>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 5px;">
+                <strong>💡 提示</strong>
+                <p style="font-size: 0.85rem; margin-top: 8px;">点击章节标题可折叠/展开内容，使用搜索快速定位知识点。</p>
+            </div>
+        </nav>
+        
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 搜索结果容器（初始隐藏） -->
+            
+            <!-- 复习策略部分 -->
+            <section id="overview" class="section">
+                <h2>复习策略与题型分布</h2>
+                
+                <div class="exam-strategy">
+                    <div class="strategy-title">题型分布与抓分路线图</div>
+                    <div class="score-distribution">
+                        <div class="score-item">
+                            <div class="type">填空题</div>
+                            <div class="points">10分</div>
+                            <div>术语定义</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="type">选择题</div>
+                            <div class="points">30分</div>
+                            <div>概念辨析</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="type">简答题</div>
+                            <div class="points">30分</div>
+                            <div>机制优缺</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="type">算法设计</div>
+                            <div class="points">10分</div>
+                            <div>PV操作</div>
+                        </div>
+                        <div class="score-item">
+                            <div class="type">综合题</div>
+                            <div class="points">20分</div>
+                            <div>计算分析</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tip-box">
+                        <div class="tip-title">复习精力分配建议（老教师经验版）</div>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li><span class="highlight">填空/选择（40分）</span>：考“术语+一句话定义+区别点+公式”。要背得准、辨得清。</li>
+                            <li><span class="highlight">简答（30分）</span>：考“为什么/怎么做/优缺点对比”。按“定义→机制→优缺点→例子”答题最稳。</li>
+                            <li><span class="highlight">算法设计（10分）</span>：文档明确是<strong>信号量PV</strong>，这题是“送分题”，关键是模板别写错。</li>
+                            <li><span class="highlight">综合（20分）</span>：最爱出“<strong>调度算表、银行家安全序列、地址转换、页面置换过程+缺页率、磁盘调度走多少道、混合索引算文件大小、位示图定位块号</strong>”。</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <details>
+                    <summary>点击查看：考场时间分配技巧</summary>
+                    <div class="details-content">
+                        <ul>
+                            <li><strong>选择题</strong>：控制在20-25分钟，不会的先标记，不要死磕</li>
+                            <li><strong>简答题</strong>：每题5-7分钟，先写要点再展开</li>
+                            <li><strong>算法设计</strong>：PV题10分钟，画图+注释</li>
+                            <li><strong>综合题</strong>：15-20分钟，先做银行家/调度等计算题</li>
+                            <li><strong>最后检查</strong>：留5分钟检查PV顺序和计算题</li>
+                        </ul>
+                    </div>
+                </details>
+            </section>
+            
+            <!-- 第1章 概论 -->
+            <section id="chapter1" class="section">
+                <h2>第1章 概论（填空/选择最爱）</h2>
+                
+                <h3>1) OS发展过程（从手工到云端）</h3>
+                <div class="memory-trick">
+                    <p>无OS → 批处理 → 多道 → 分时 → 实时 → 网络/分布式/云</p>
+                </div>
+                
+                <details>
+                    <summary>展开：各阶段核心特征对比</summary>
+                    <div class="details-content">
+                        <ul>
+                            <li><strong>无OS</strong>：人工操作，单用户独占</li>
+                            <li><strong>单道批处理</strong>：自动作业序列，但内存只放一道</li>
+                            <li><strong>多道批处理</strong>：内存多道，CPU利用率↑，但无交互</li>
+                            <li><strong>分时系统</strong>：时间片轮转，交互性强，用户感觉独占</li>
+                            <li><strong>实时系统</strong>：截止时间确定，可靠性和响应时间优先</li>
+                        </ul>
+                    </div>
+                </details>
+                
+                <div class="warning-box">
+                    <div class="warning-title">选择题常见陷阱</div>
+                    <p>常问：<strong>分时系统</strong>核心：<span class="highlight">时间片轮转</span>、交互性强</p>
+                    <p><strong>实时系统</strong>核心：<span class="highlight">截止期/确定性</span>（不是“更快”，是“按时”）</p>
+                </div>
+                
+                <div class="example-card">
+                    <h4>例题1：区分分时与实时系统</h4>
+                    <p><strong>题目</strong>：以下哪个场景适合用实时系统？</p>
+                    <p>A. 学生成绩管理系统  B. 飞机飞行控制系统  C. 文本编辑器  D. 网页浏览</p>
+                    
+                    <div class="solution">
+                        <p><strong>答案：B</strong></p>
+                        <p><strong>解析</strong>：实时系统要求在截止时间内完成任务，飞机飞行控制对时间有严格要求，必须保证响应时间。其他选项均为交互式或批处理场景。</p>
+                    </div>
+                </div>
+                
+                <h3>2) OS四大特性（高频填空）</h3>
+                <div class="memory-trick">
+                    <p>并、共、虚、异</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>并发</strong>：宏观同时、微观交替</li>
+                        <li><strong>共享</strong>：资源大家用（互斥/同时）</li>
+                        <li><strong>虚拟</strong>：一个变多个（虚拟机/存储器）</li>
+                        <li><strong>异步</strong>：走走停停但最终可推进</li>
+                    </ul>
+                </div>
+                
+                <h3>3) OS与用户/硬件接口</h3>
+                <ul>
+                    <li><strong>用户接口</strong>：命令接口（CLI）、图形接口（GUI）、系统调用（API）</li>
+                    <li><strong>硬件接口</strong>：中断机制、DMA、I/O端口</li>
+                    <li><strong>核心概念</strong>：<span class="highlight">系统调用是用户态进入内核态的唯一正规入口</span></li>
+                </ul>
+            </section>
+            
+            <!-- 第2章 进程管理 -->
+            <section id="chapter2" class="section">
+                <h2>第2章 进程管理（简答+算法设计主场）</h2>
+                
+                <h3>1) 进程与PCB</h3>
+                <ul>
+                    <li><strong>进程</strong>：程序的一次执行 + 资源集合 + 执行现场</li>
+                    <li><strong>PCB</strong>：进程的“身份证+档案袋”，包含PID、状态、PC、寄存器、优先级等</li>
+                </ul>
+                
+                <h4>进程切换（context switch）三步走</h4>
+                <ol>
+                    <li><strong>保存</strong>旧进程现场（PC、寄存器…进PCB）</li>
+                    <li><strong>切换</strong>到内核调度</li>
+                    <li><strong>恢复</strong>新进程现场（从PCB出）</li>
+                </ol>
+                
+                <div class="tip-box">
+                    <p><strong>考点</strong>：切换有开销（保存/恢复 + cache/TLB 影响），所以时间片太小会浪费。</p>
+                </div>
+                
+                <h3>2) 进程状态转换</h3>
+                <div class="memory-trick">
+                    <p>新就绪，跑阻塞，完退出</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>就绪 → 运行：被调度</li>
+                        <li>运行 → 就绪：时间片到/被高优先级抢占</li>
+                        <li>运行 → 阻塞：等待I/O/资源/事件</li>
+                        <li>阻塞 → 就绪：I/O完成/资源到位/事件发生</li>
+                    </ul>
+                </div>
+                
+                <div class="example-card">
+                    <h4>例题2：状态转换原因</h4>
+                    <p><strong>题目</strong>：进程从运行状态转换到阻塞状态的可能原因是什么？</p>
+                    
+                    <div class="solution">
+                        <p><strong>答案要点</strong>：</p>
+                        <ul>
+                            <li>请求I/O操作（如读磁盘、等待键盘输入）</li>
+                            <li>申请的资源暂时无法满足（如等待互斥锁、信号量）</li>
+                            <li>主动休眠（如调用sleep()）</li>
+                            <li>等待子进程结束（如wait()）</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h3>3) 信号量值的意义</h3>
+                <ul>
+                    <li><strong>计数信号量 S</strong> 表示“可用资源数”</li>
+                    <li><strong>S ≥ 0</strong>：还有 <strong>S</strong> 个资源可用</li>
+                    <li><strong>S < 0</strong>：有 <strong>|S|</strong> 个进程在等待（阻塞队列里）</li>
+                </ul>
+                
+                <h3>4) PV操作：互斥与同步（算法设计10分核心）</h3>
+                <div class="memory-trick">
+                    <p><strong>P（wait）= 申请/占用：S--，不够就睡</strong></p>
+                    <p><strong>V（signal）= 归还/释放：S++，有人睡就叫醒</strong></p>
+                </div>
+                
+                <h4>A. 互斥模板（一个坑位一把锁）</h4>
+                <div class="code-block">
+semaphore mutex = 1;
+
+P(mutex);
+// 临界区（访问共享变量/共享缓冲区/打印机等）
+V(mutex);
+                </div>
+                
+                <h4>B. 同步模板（先后顺序靠信号）</h4>
+                <div class="code-block">
+semaphore sync = 0;
+
+// A进程
+...A的工作...
+V(sync);   // 通知B：A完事了
+
+// B进程
+P(sync);   // 等到A通知
+...B的工作...
+                </div>
+                
+                <h4>C. 互斥+同步经典：生产者-消费者</h4>
+                <div class="code-block">
+semaphore empty = N; // 空槽
+semaphore full  = 0; // 满槽
+semaphore mutex = 1; // 缓冲区互斥
+
+// producer
+P(empty);
+P(mutex);
+put();
+V(mutex);
+V(full);
+
+// consumer
+P(full);
+P(mutex);
+get();
+V(mutex);
+V(empty);
+                </div>
+                
+                <div class="warning-box">
+                    <div class="warning-title">必错点（考场最常见扣分）</div>
+                    <ul style="margin-left: 20px;">
+                        <li>把P/V顺序写反（尤其 mutex 的 P/V 要夹住临界区）</li>
+                        <li>忘了初始化：互斥=1，同步信号通常=0</li>
+                        <li>用一个信号量同时干“互斥+同步”（容易死锁/逻辑错）</li>
+                    </ul>
+                </div>
+                
+                <details>
+                    <summary>点击查看：PV操作解题步骤</summary>
+                    <div class="details-content">
+                        <ol>
+                            <li><strong>分析同步关系</strong>：找出“谁必须等谁”</li>
+                            <li><strong>确定信号量含义</strong>：互斥用mutex，同步用sync</li>
+                            <li><strong>初始化信号量</strong>：互斥=1，同步=0</li>
+                            <li><strong>PV配对</strong>：P申请资源，V释放资源</li>
+                            <li><strong>检查顺序</strong>：P(mutex)必须在临界区前，V(mutex)在后</li>
+                            <li><strong>验证</strong>：会不会死锁？会不会饥饿？</li>
+                        </ol>
+                    </div>
+                </details>
+                
+                <div class="example-card">
+                    <h4>例题3：PV应用题</h4>
+                    <p><strong>题目</strong>：有3个进程A、B、C，A先执行，B次之，C最后。用PV操作实现。</p>
+                    
+                    <div class="solution">
+                        <p><strong>解题思路</strong>：两个同步信号量，s1控制A→B，s2控制B→C</p>
+                        <div class="code-block">
+semaphore s1 = 0, s2 = 0;
+
+// A进程
+...A的工作...
+V(s1);  // 通知B可以执行了
+
+// B进程
+P(s1);  // 等待A完成
+...B的工作...
+V(s2);  // 通知C可以执行了
+
+// C进程
+P(s2);  // 等待B完成
+...C的工作...
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>5) 进程间通信IPC原理</h3>
+                <ul>
+                    <li><strong>共享存储</strong>：最快，但要配合同步（信号量/管程）</li>
+                    <li><strong>消息传递</strong>：send/receive，更安全、分布式友好</li>
+                    <li><strong>管道/命名管道</strong>：半双工常见</li>
+                    <li><strong>套接字</strong>：跨机器通信（网络编程）</li>
+                </ul>
+            </section>
+            
+            <!-- 第3章 处理机调度与死锁 -->
+            <section id="chapter3" class="section">
+                <h2>第3章 处理机调度与死锁（综合题高产区）</h2>
+                
+                <h3>1) 三级调度</h3>
+                <div class="memory-trick">
+                    <p>长中短（作业→内存→CPU）</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>高级/作业调度（长程）</strong>：决定哪些作业进内存（控制多道程度）</li>
+                        <li><strong>中级调度（中程）</strong>：对换/挂起（内存紧张时把进程换出）</li>
+                        <li><strong>低级/进程调度（短程）</strong>：从就绪队列选一个上CPU（最频繁）</li>
+                    </ul>
+                </div>
+                
+                <h3>2) 调度算法（选择+综合：画甘特图算时间）</h3>
+                <ul>
+                    <li><strong>FCFS</strong>：先来先服务；对短作业不友好（“护航效应”）</li>
+                    <li><strong>SJF / SPF</strong>：短作业优先；平均周转时间最小（但可能饿死长作业）</li>
+                    <li><strong>SRTF</strong>：最短剩余时间优先（可抢占）</li>
+                    <li><strong>优先级调度</strong>：静态/动态；低优先级可能饥饿（靠“老化”解决）</li>
+                    <li><strong>RR时间片轮转</strong>：分时系统常用；时间片越小响应越好但切换开销增</li>
+                    <li><strong>HRRN高响应比</strong>：响应比=(等待+服务)/service，兼顾短作业与等待久的</li>
+                </ul>
+                
+                <h4>综合题“算时间”万能步骤</h4>
+                <ol>
+                    <li>列出：到达时间、服务时间（CPU burst）、优先级/时间片（若给）</li>
+                    <li>画时间轴（甘特图）</li>
+                    <li>得到每个进程：开始/完成时间</li>
+                    <li><strong>周转时间</strong> = 完成 - 到达</li>
+                    <li><strong>带权周转</strong> = 周转 / 服务</li>
+                    <li>题目要平均值就求均值</li>
+                </ol>
+                
+                <div class="example-card">
+                    <h4>例题4：调度算法计算</h4>
+                    <p><strong>题目</strong>：进程A、B、C到达时间分别为0、1、2，服务时间分别为4、3、2。用FCFS、SJF、RR（时间片=2）计算平均周转时间。</p>
+                    
+                    <div class="solution">
+                        <p><strong>FCFS</strong>：A(0-4), B(4-7), C(7-9) → 周转：4,6,7 → 平均5.67</p>
+                        <p><strong>SJF</strong>：A(0-4), C(4-6), B(6-9) → 周转：4,5,8 → 平均5.67</p>
+                        <p><strong>RR</strong>：A(0-2), B(2-3), C(3-4), A(4-5), B(5-6), A(6-7), B(7-8), A(8-9), C(9-10) → 周转：9,7,8 → 平均8.0</p>
+                    </div>
+                </div>
+                
+                <details>
+                    <summary>点击查看：调度算法选择策略</summary>
+                    <div class="details-content">
+                        <ul>
+                            <li><strong>批处理系统</strong>：FCFS、SJF（非抢占）</li>
+                            <li><strong>分时系统</strong>：RR、优先级调度</li>
+                            <li><strong>实时系统</strong>：EDF（最早截止时间优先）、LLF（最低松弛度优先）</li>
+                            <li><strong>通用原则</strong>：交互式用RR/优先级，追求吞吐量用SJF</li>
+                        </ul>
+                    </div>
+                </details>
+                
+                <h3>3) 死锁与银行家算法（综合题大头）</h3>
+                <h4>A. 死锁四必要条件（选择题必背）</h4>
+                <div class="memory-trick">
+                    <p>互、占、不、环</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>互斥</strong>：资源一次只能给一个</li>
+                        <li><strong>占有且等待</strong>：拿着A等B</li>
+                        <li><strong>不可剥夺</strong>：拿到的不让抢</li>
+                        <li><strong>环路等待</strong>：你等我我等你</li>
+                    </ul>
+                </div>
+                
+                <h4>B. 银行家算法（安全性判断“固定四表”）</h4>
+                <ul>
+                    <li><strong>Available</strong>（可用）</li>
+                    <li><strong>Max</strong>（最大需求）</li>
+                    <li><strong>Allocation</strong>（已分配）</li>
+                    <li><strong>Need = Max - Allocation</strong>（还需要）</li>
+                </ul>
+                
+                <h4>安全性检查模板</h4>
+                <ol>
+                    <li>令 <strong>Work = Available</strong></li>
+                    <li>找一个进程 i，使 <strong>Need[i] ≤ Work</strong></li>
+                    <li>让它“完成”：<strong>Work += Allocation[i]</strong>，把 i 加入安全序列</li>
+                    <li>重复直到全完成（安全）或卡住（不安全）</li>
+                </ol>
+                
+                <h4>资源请求（分配）模板</h4>
+                <ol>
+                    <li>检查 Request[i] ≤ Need[i]</li>
+                    <li>检查 Request[i] ≤ Available</li>
+                    <li>“试分配”后再跑一遍安全性检查</li>
+                </ol>
+                
+                <div class="example-card">
+                    <h4>例题5：银行家算法</h4>
+                    <p><strong>题目</strong>：系统有A、B、C三种资源，可用量分别为(3,3,2)。进程P0-P4的Max和Allocation如下表，判断安全性。</p>
+                    <div class="solution">
+                        <p><strong>步骤1</strong>：计算Need = Max - Allocation</p>
+                        <p><strong>步骤2</strong>：Work = Available = (3,3,2)</p>
+                        <p><strong>步骤3</strong>：找Need ≤ Work的进程，如P1(1,2,2) ≤ (3,3,2)，执行P1后Work = (3,3,2)+(0,1,0)=(3,4,2)</p>
+                        <p><strong>步骤4</strong>：继续找，直到所有进程完成 → 安全序列[P1, P3, P4, P0, P2]</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 第4章 存储器及虚拟存储器 -->
+            <section id="chapter4" class="section">
+                <h2>第4章 存储器及虚拟存储器（综合题王中王）</h2>
+                
+                <h3>1) 存储层次结构</h3>
+                <div class="memory-trick">
+                    <p>寄-缓-主-盘-带（越上越快越贵越小）</p>
+                    <p>寄存器、Cache、主存、磁盘、磁带/光盘</p>
+                </div>
+                
+                <h3>2) 编译与链接</h3>
+                <ul>
+                    <li>编译：源程序→目标文件（.o/.obj）</li>
+                    <li>链接：多个目标文件+库 → 可执行文件
+                        <ul>
+                            <li><strong>静态链接</strong>：生成时把库“打包进去”</li>
+                            <li><strong>动态链接</strong>：运行时再装载共享库（省空间、易更新）</li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <h3>3) 分区管理</h3>
+                <ul>
+                    <li><strong>固定分区</strong>：简单但有<strong>内部碎片</strong></li>
+                    <li><strong>可变分区</strong>：按需划分但有<strong>外部碎片</strong></li>
+                    <li><strong>外部碎片解决</strong>：<strong>紧凑（compaction）</strong> 或用分页/分段</li>
+                </ul>
+                
+                <h3>4) 分页：逻辑/物理地址结构</h3>
+                <div class="tip-box">
+                    <p><strong>计算题套路</strong>：给你页大小=2^k → 偏移就是 k 位；其余是页号位。</p>
+                </div>
+                <ul>
+                    <li><strong>逻辑地址</strong> = 页号 p + 页内偏移 d</li>
+                    <li><strong>物理地址</strong> = 块号（帧号）f + 偏移 d</li>
+                    <li><strong>地址转换</strong>：查页表 p→f，再拼接 f 与 d</li>
+                </ul>
+                
+                <div class="example-card">
+                    <h4>例题6：地址转换计算</h4>
+                    <p><strong>题目</strong>：某系统页大小为4KB，逻辑地址为0x12345678，求页号和页内偏移。</p>
+                    
+                    <div class="solution">
+                        <p><strong>解析</strong>：</p>
+                        <ul>
+                            <li>页大小4KB = 2^12字节 → 偏移12位</li>
+                            <li>逻辑地址0x12345678 = 0001 0010 0011 0100 0101 0110 0111 1000</li>
+                            <li>页号 = 高20位 = 0x12345</li>
+                            <li>页内偏移 = 低12位 = 0x678</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h3>5) 分段：地址结构与转换</h3>
+                <ul>
+                    <li><strong>逻辑地址</strong> = 段号 s + 段内偏移 w</li>
+                    <li><strong>段表项</strong>：base（基址）+ limit（段长）</li>
+                    <li><strong>转换步骤</strong>：
+                        <ol>
+                            <li>用 s 找段表项</li>
+                            <li>判断 <strong>w < limit</strong> 否则越界</li>
+                            <li>物理地址 = base + w</li>
+                        </ol>
+                    </li>
+                </ul>
+                
+                <div class="warning-box">
+                    <div class="warning-title">分页 vs 分段（选择题常问）</div>
+                    <p><strong>分页</strong>：为“管理内存”，大小固定、对用户透明</p>
+                    <p><strong>分段</strong>：为“贴合程序结构”，大小可变、段有语义（代码段/数据段/栈段）</p>
+                </div>
+                
+                <h3>6) 请求分页：置换算法 + 缺页率</h3>
+                <ul>
+                    <li><strong>常见置换</strong>：FIFO、OPT、LRU、Clock</li>
+                    <li><strong>记忆梗</strong>：
+                        <ul>
+                            <li>FIFO：谁先来谁先走（容易Belady异常）</li>
+                            <li>OPT：未来最久不用的走（理论最优）</li>
+                            <li>LRU：最近最少使用（更贴近局部性）</li>
+                            <li>Clock：LRU的“近似平替”（二次机会）</li>
+                        </ul>
+                    </li>
+                    <li><strong>缺页率</strong> = 缺页次数 / 访问次数</li>
+                </ul>
+                
+                <details>
+                    <summary>点击查看：页面置换算法对比表</summary>
+                    <div class="details-content">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr style="background: var(--light);">
+                                <th style="padding: 8px; border: 1px solid #ddd;">算法</th>
+                                <th style="padding: 8px; border: 1px solid #ddd;">原理</th>
+                                <th style="padding: 8px; border: 1px solid #ddd;">优点</th>
+                                <th style="padding: 8px; border: 1px solid #ddd;">缺点</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; border: 1px solid #ddd;">FIFO</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">先进先出</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">简单</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">Belady异常，性能差</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; border: 1px solid #ddd;">OPT</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">未来最久不用</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">理论最优</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">无法实现</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; border: 1px solid #ddd;">LRU</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">最近最少使用</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">接近OPT，实用</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">硬件开销大</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; border: 1px solid #ddd;">Clock</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">二次机会</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">LRU近似，开销小</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">精度不如LRU</td>
+                            </tr>
+                        </table>
+                    </div>
+                </details>
+                
+                <div class="example-card">
+                    <h4>例题7：页面置换过程</h4>
+                    <p><strong>题目</strong>：引用串：1,2,3,4,1,2,5,1,2,3,4,5，页面大小3，用FIFO和LRU计算缺页次数。</p>
+                    
+                    <div class="solution">
+                        <p><strong>FIFO</strong>：缺页9次（Belady异常）</p>
+                        <p><strong>LRU</strong>：缺页10次</p>
+                        <p><strong>过程演示</strong>：逐步画出内存状态表，记录每步缺页情况。</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 第5章 设备管理 -->
+            <section id="chapter5" class="section">
+                <h2>第5章 设备管理（磁盘调度+缓冲+SPOOLing很爱考）</h2>
+                
+                <h3>1) I/O软件层次（选择题）</h3>
+                <div class="memory-trick">
+                    <p>用-独-驱-中-硬</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>用户层I/O软件</li>
+                        <li>设备无关软件（独立性：命名、保护、缓冲等）</li>
+                        <li>设备驱动程序</li>
+                        <li>中断处理程序</li>
+                        <li>硬件</li>
+                    </ul>
+                </div>
+                
+                <h3>2) 设备控制方式（选择题）</h3>
+                <div class="memory-trick">
+                    <p>程—中—DMA—通（越来越省CPU）</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>程序查询</strong>：CPU一直盯着（适合超简单/超快少量）</li>
+                        <li><strong>中断驱动</strong>：设备好了敲门（常用）</li>
+                        <li><strong>DMA</strong>：一块数据直接搬，CPU只发命令（磁盘/网卡常用）</li>
+                        <li><strong>通道</strong>：更高级的I/O处理（大型机思想）</li>
+                    </ul>
+                </div>
+                
+                <h3>3) SPOOLing（假脱机）</h3>
+                <div class="tip-box">
+                    <p><strong>一句话</strong>：用磁盘当“巨大缓冲区”，把独占设备变成可共享的“假脱机设备”</p>
+                    <p><strong>典型应用</strong>：打印——先写入磁盘打印队列，再由后台进程慢慢打。</p>
+                </div>
+                
+                <h3>4) 缓冲技术</h3>
+                <ul>
+                    <li><strong>单缓冲</strong>：I/O和处理部分可并行，但仍有等待</li>
+                    <li><strong>双缓冲</strong>：一边I/O填A，一边CPU处理B（更并行）</li>
+                    <li><strong>循环/缓冲池</strong>：连续流数据（音视频、网络）</li>
+                </ul>
+                
+                <h3>5) 磁盘：访问时间与调度（综合题高频）</h3>
+                <div class="tip-box">
+                    <p><strong>访问时间</strong> = 寻道时间 + 旋转延迟 + 传输时间</p>
+                    <p><strong>口诀</strong>：寻-转-传</p>
+                </div>
+                
+                <h4>磁盘调度算法</h4>
+                <ul>
+                    <li>FCFS</li>
+                    <li>SSTF（最短寻道优先）</li>
+                    <li>SCAN（电梯：到头再返）</li>
+                    <li>C-SCAN（单向电梯：到头回起点再扫）</li>
+                    <li>LOOK / C-LOOK（电梯但“看到最后一个请求就回头/回起点”，不必到磁盘端点）</li>
+                </ul>
+                
+                <h4>算总移动磁道数模板</h4>
+                <ol>
+                    <li>写出起始磁头位置</li>
+                    <li>按算法排访问序列</li>
+                    <li>把相邻两次访问的差值取绝对值相加</li>
+                </ol>
+                
+                <div class="example-card">
+                    <h4>例题8：磁盘调度计算</h4>
+                    <p><strong>题目</strong>：磁头初始位置100，请求序列[55, 58, 39, 18, 90, 160, 150, 38, 184]，用SCAN和C-SCAN计算移动道数。</p>
+                    
+                    <div class="solution">
+                        <p><strong>SCAN（电梯）</strong>：100→150→184→55→39→18，移动：50+34+129+16+21 = 250</p>
+                        <p><strong>C-SCAN</strong>：100→150→184→199→0→18→39→55，移动：50+34+15+18+39+16 = 192</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 第6章 文件管理 -->
+            <section id="chapter6" class="section">
+                <h2>第6章 文件管理及磁盘空间管理（混合索引+位示图常上综合）</h2>
+                
+                <h3>1) 文件、FCB、索引结点inode</h3>
+                <ul>
+                    <li><strong>文件</strong>：有名的数据集合</li>
+                    <li><strong>FCB</strong>：文件“档案袋”（属性+位置+权限…）</li>
+                    <li><strong>inode（索引结点）</strong>：把“文件名”和“文件属性/地址”分离（目录项通常是：文件名 → inode号）</li>
+                </ul>
+                
+                <h3>2) 目录结构</h3>
+                <ul>
+                    <li><strong>单级目录</strong>：简单但重名冲突</li>
+                    <li><strong>两级目录</strong>：用户隔离更好</li>
+                    <li><strong>树形目录</strong>：最常见（层级清晰）</li>
+                    <li><strong>无环图目录</strong>：允许共享子目录/文件（要防环）</li>
+                </ul>
+                
+                <h3>3) 外存组织方式 + 混合索引算文件大小（综合题常考）</h3>
+                <ul>
+                    <li><strong>连续分配</strong>：访问快；外部碎片；文件难增长</li>
+                    <li><strong>链接分配</strong>：无外部碎片；随机访问慢</li>
+                    <li><strong>索引分配</strong>：随机访问好；索引块有开销</li>
+                </ul>
+                
+                <h4>混合索引算文件大小套路</h4>
+                <ol>
+                    <li>先确定：块大小B、一个地址项大小a ⇒ 一个索引块能存 <strong>B/a</strong> 个地址</li>
+                    <li>直接块：k 个 ⇒ k·B</li>
+                    <li>一级间接：1 个索引块 ⇒ (B/a)·B</li>
+                    <li>二级间接：1 个二级索引块指向 (B/a) 个一级索引块 ⇒ (B/a)²·B</li>
+                    <li>依次类推，加总即可</li>
+                </ol>
+                
+                <div class="example-card">
+                    <h4>例题9：混合索引计算</h4>
+                    <p><strong>题目</strong>：某文件系统，块大小4KB，地址项4B。inode包含10个直接块、1个一级间接、1个二级间接。求最大文件大小。</p>
+                    
+                    <div class="solution">
+                        <p><strong>计算</strong>：</p>
+                        <ul>
+                            <li>每块地址数 = 4KB / 4B = 1024</li>
+                            <li>直接块 = 10 × 4KB = 40KB</li>
+                            <li>一级间接 = 1024 × 4KB = 4MB</li>
+                            <li>二级间接 = 1024² × 4KB = 4GB</li>
+                            <li><strong>总计</strong> = 4GB + 4MB + 40KB</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h3>4) 位示图（bitmap）管理空闲空间</h3>
+                <div class="tip-box">
+                    <p><strong>位示图本质</strong>：用0/1表示盘块空闲/占用。</p>
+                    <p><strong>计算公式</strong>：若每行有 m 位，(i行, j列) 对应块号：<strong>i·m + j</strong>（是否从0开始看题目定义！）</p>
+                </div>
+                
+                <div class="example-card">
+                    <h4>例题10：位示图定位</h4>
+                    <p><strong>题目</strong>：位示图每行16位，第5行第8列对应的盘块号是多少？（行/列从0开始）</p>
+                    
+                    <div class="solution">
+                        <p><strong>答案</strong>：5 × 16 + 8 = 88</p>
+                        <p><strong>注意</strong>：如果题目说行/列从1开始，答案要+1或-1调整！</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 易错点汇总 -->
+            <section id="error-summary" class="section">
+                <h2>⚠️ 易错点汇总（考前必看）</h2>
+                
+                <div class="error-summary">
+                    <h3>高频错误TOP 10</h3>
+                    <ul>
+                        <li><strong>PV操作顺序错</strong>：P(mutex)不在临界区前，V(mutex)不在后</li>
+                        <li><strong>信号量初始化错</strong>：互斥=1，同步=0，记混就扣分</li>
+                        <li><strong>银行家算法漏步骤</strong>：忘记试分配后检查安全性</li>
+                        <li><strong>地址转换越界判断漏</strong>：分段地址转换要检查 w < limit</li>
+                        <li><strong>调度算法时间算错</strong>：周转时间=完成-到达，不是完成-开始</li>
+                        <li><strong>磁盘调度方向搞反</strong>：SCAN/C-SCAN方向要明确</li>
+                        <li><strong>混合索引单位错</strong>：块大小和地址项大小单位要统一为字节</li>
+                        <li><strong>位示图行列起始错</strong>：从0还是从1开始，看题目描述</li>
+                        <li><strong>进程状态转换原因混淆</strong>：运行→阻塞是主动等待，不是时间片到</li>
+                        <li><strong>死锁条件漏写</strong>：四个条件缺一不可，记口诀“互占不环”</li>
+                    </ul>
+                </div>
+                
+                <details>
+                    <summary>点击查看：如何避免这些错误</summary>
+                    <div class="details-content">
+                        <ol>
+                            <li><strong>考前默写</strong>：PV模板、银行家步骤、调度公式各写3遍</li>
+                            <li><strong>画图辅助</strong>：调度画甘特图，地址转换画示意图</li>
+                            <li><strong>检查清单</strong>：做完题后按清单逐项检查</li>
+                            <li><strong>单位换算</strong>：所有计算题先统一单位（字节/KB/MB）</li>
+                            <li><strong>读题仔细</strong>：特别注意“从0开始”还是“从1开始”</li>
+                        </ol>
+                    </div>
+                </details>
+            </section>
+            
+            <!-- 必练综合模板 -->
+            <section id="templates" class="section">
+                <h2>🎯 考前“最容易提分”的5个必练综合模板</h2>
+                
+                <div class="template-list">
+                    <h4>1. 调度算法画甘特图 → 算周转/带权周转</h4>
+                    <ol>
+                        <li>列出：到达时间、服务时间（CPU burst）、优先级/时间片（若给）</li>
+                        <li>画时间轴（甘特图）</li>
+                        <li>得到每个进程：开始/完成时间</li>
+                        <li>周转时间 = 完成 - 到达</li>
+                        <li>带权周转 = 周转 / 服务</li>
+                        <li>题目要平均值就求均值</li>
+                    </ol>
+                </div>
+                
+                <div class="template-list">
+                    <h4>2. 银行家：Need表 → Work试探 → 安全序列</h4>
+                    <ol>
+                        <li>计算 Need = Max - Allocation</li>
+                        <li>令 Work = Available</li>
+                        <li>找进程 i 使 Need[i] ≤ Work</li>
+                        <li>Work += Allocation[i]，i 加入安全序列</li>
+                        <li>重复直到全完成或卡住</li>
+                    </ol>
+                </div>
+                
+                <div class="template-list">
+                    <h4>3. 分页/分段地址转换（含越界判断）</h4>
+                    <p><strong>分页</strong>：查页表 p→f，拼接 f 与 d</p>
+                    <p><strong>分段</strong>：查段表 s→base+limit，检查 w<limit，物理地址=base+w</p>
+                </div>
+                
+                <div class="template-list">
+                    <h4>4. 页面置换过程 → 缺页次数 → 缺页率</h4>
+                    <ol>
+                        <li>按引用串一步步换页</li>
+                        <li>按算法选择置换页（FIFO/OPT/LRU/Clock）</li>
+                        <li>数缺页次数</li>
+                        <li>缺页率 = 缺页次数 / 访问次数</li>
+                    </ol>
+                </div>
+                
+                <div class="template-list">
+                    <h4>5. 磁盘调度算总移动磁道数 + 寻转传访问时间</h4>
+                    <ol>
+                        <li>写出起始磁头位置</li>
+                        <li>按算法排访问序列</li>
+                        <li>把相邻两次访问的差值取绝对值相加</li>
+                        <li>访问时间 = 寻道时间 + 旋转延迟 + 传输时间</li>
+                    </ol>
+                </div>
+                
+                <div class="tip-box">
+                    <div class="tip-title">终极提醒</div>
+                    <p style="margin-top: 10px;">考前把这5个模板各练1-2遍，考场直接套用，节省时间还能拿满分！</p>
+                </div>
+                
+                <details>
+                    <summary>点击查看：考场应急口诀</summary>
+                    <div class="details-content">
+                        <ul>
+                            <li><strong>PV口诀</strong>：P申请V释放，互斥夹临界，同步靠信号</li>
+                            <li><strong>调度口诀</strong>：FCFS看顺序，SJF看长度，RR看时间片，优先看老化</li>
+                            <li><strong>死锁口诀</strong>：互占不环四条件，银行家算Need表，安全序列找出口</li>
+                            <li><strong>存储口诀</strong>：分页固定有偏移，分段变长要越界，LRU看最近，FIFO看先进</li>
+                            <li><strong>磁盘口诀</strong>：寻转传三时间，SSTF最短优先，SCAN电梯来回</li>
+                        </ul>
+                    </div>
+                </details>
+            </section>
+        </div>
+        
+        <footer>
+            <p>操作系统复习文档 | 高效备考指南 | 祝考试顺利！</p>
+            <p>© 2023 操作系统复习资料整理 | 增强版网页</p>
+        </footer>
+        
+        <a href="#" class="back-to-top" title="返回顶部">↑</a>
+    </div>
+
+    <script>
+        // 1. 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+        
+        // 2. 滚动时导航栏高亮当前章节
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('.section');
+            const navLinks = document.querySelectorAll('.sidebar a');
+            
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.pageYOffset >= (sectionTop - 100)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.style.background = 'rgba(255,255,255,0.1)';
+                link.style.fontWeight = 'normal';
+                if (link.getAttribute('href').includes(current)) {
+                    link.style.background = '#3498db';
+                    link.style.fontWeight = 'bold';
+                }
+            });
+        });
+        
+        // 3. 返回顶部按钮显示/隐藏
+        const backToTop = document.querySelector('.back-to-top');
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        });
+        
+        // 4. 搜索功能
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        
+        // 搜索数据源：所有章节内容
+        const searchData = [
+            { id: 'chapter1', title: '第1章 概论', keywords: ['OS发展', '并发', '共享', '虚拟', '异步', '系统调用', '分时', '实时'], content: '无OS 批处理 多道 分时 实时 网络 并发 共享 虚拟 异步 系统调用' },
+            { id: 'chapter2', title: '第2章 进程管理', keywords: ['进程', 'PCB', '信号量', 'PV操作', '生产者消费者', 'IPC', '同步', '互斥'], content: '进程 PCB 信号量 PV 生产者 消费者 同步 互斥' },
+            { id: 'chapter3', title: '第3章 调度与死锁', keywords: ['调度', 'FCFS', 'SJF', 'RR', '银行家', '死锁', '安全序列', '周转时间'], content: '调度 FCFS SJF RR 银行家 死锁 安全序列 周转' },
+            { id: 'chapter4', title: '第4章 存储管理', keywords: ['分页', '分段', '地址转换', 'LRU', 'FIFO', 'OPT', '缺页率', '虚拟存储'], content: '分页 分段 地址转换 LRU FIFO OPT 缺页率 虚拟存储' },
+            { id: 'chapter5', title: '第5章 设备管理', keywords: ['磁盘调度', 'SPOOLing', '缓冲', 'SCAN', 'SSTF', '访问时间'], content: '磁盘 SPOOLing 缓冲 SCAN SSTF 访问时间' },
+            { id: 'chapter6', title: '第6章 文件管理', keywords: ['混合索引', '位示图', 'inode', 'FCB', '文件大小', '目录结构'], content: '混合索引 位示图 inode FCB 文件大小 目录' },
+            { id: 'templates', title: '必练模板', keywords: ['PV', '银行家', '调度', '置换', '磁盘'], content: 'PV 银行家 调度 置换 磁盘' },
+            { id: 'error-summary', title: '易错点', keywords: ['错误', '易错', '陷阱', '注意事项'], content: '错误 易错 陷阱 注意' }
+        ];
+        
+        searchInput.addEventListener('input', function(e) {
+            const query = e.target.value.trim().toLowerCase();
+            
+            if (query.length < 2) {
+                searchResults.style.display = 'none';
+                searchResults.innerHTML = '';
+                return;
+            }
+            
+            // 搜索匹配
+            const results = searchData.filter(item => {
+                const inKeywords = item.keywords.some(k => k.toLowerCase().includes(query));
+                const inContent = item.content.toLowerCase().includes(query);
+                const inTitle = item.title.toLowerCase().includes(query);
+                return inKeywords || inContent || inTitle;
+            });
+            
+            // 显示结果
+            if (results.length > 0) {
+                searchResults.style.display = 'block';
+                searchResults.innerHTML = '<h4>搜索结果：</h4><ul>' + 
+                    results.map(r => `<li onclick="document.getElementById('${r.id}').scrollIntoView({behavior: 'smooth'}); document.getElementById('searchResults').style.display='none';">${r.title}</li>`).join('') +
+                    '</ul>';
+            } else {
+                searchResults.style.display = 'block';
+                searchResults.innerHTML = '<p style="color: #666;">未找到匹配内容，请尝试其他关键词</p>';
+            }
+        });
+        
+        // 点击页面其他地方隐藏搜索结果
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.quick-jump')) {
+                searchResults.style.display = 'none';
+            }
+        });
+        
+        // 5. 自动保存阅读进度（可选功能）
+        window.addEventListener('beforeunload', function() {
+            localStorage.setItem('osReviewScrollY', window.pageYOffset);
+        });
+        
+        window.addEventListener('load', function() {
+            const savedY = localStorage.getItem('osReviewScrollY');
+            if (savedY && parseInt(savedY) > 100) {
+                // 恢复滚动位置，但不自动滚动，避免干扰用户
+                console.log('上次阅读位置：' + savedY + 'px');
+            }
+        });
+        
+        // 6. 为所有details添加展开/折叠状态保存
+        document.querySelectorAll('details').forEach((detail, index) => {
+            const key = 'osReview_detail_' + index;
+            
+            // 恢复状态
+            if (localStorage.getItem(key) === 'open') {
+                detail.setAttribute('open', '');
+            }
+            
+            // 监听状态变化
+            detail.addEventListener('toggle', function() {
+                if (this.open) {
+                    localStorage.setItem(key, 'open');
+                } else {
+                    localStorage.removeItem(key);
+                }
+            });
+        });
+        
+        // 7. 键盘快捷键
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + K：聚焦搜索框
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                searchInput.focus();
+            }
+            // Ctrl/Cmd + Home：返回顶部
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Home') {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+        
+        // 8. 提示用户快捷键
+        setTimeout(() => {
+            if (!sessionStorage.getItem('shortcutTipShown')) {
+                const tip = document.createElement('div');
+                tip.style.cssText = 'position: fixed; bottom: 90px; right: 30px; background: var(--primary); color: white; padding: 10px 15px; border-radius: 8px; font-size: 0.85rem; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 100; animation: fadeIn 0.5s;';
+                tip.innerHTML = '💡 Ctrl+K 搜索 | Ctrl+Home 返回顶部';
+                document.body.appendChild(tip);
+                
+                setTimeout(() => {
+                    tip.style.opacity = '0';
+                    setTimeout(() => tip.remove(), 500);
+                }, 5000);
+                
+                sessionStorage.setItem('shortcutTipShown', 'true');
+            }
+        }, 2000);
+        
+        // 添加淡入动画
+        const style = document.createElement('style');
+        style.textContent = '@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }';
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
